@@ -1,6 +1,273 @@
-# Introduction
+## Introduction
 
-Welcome to QuickDocs, a pop-up static site for documenting your things.
+Decal is a React component that will help you draw to an HTML Canvas.
+
+It's great for generative art, quick games, and other frame-by-frame interactions.
+
+## Installation
+
+```ts
+yarn add react-decal
+```
+
+## Usage
+
+### Drawing to the Canvas
+
+Every instance of the Decal component requires a value for its `draw` prop. This prop accepts a callback that receives three argument: a `CanvasRenderingContext2D`, any assets that the component has pre-loaded, and information about the component's state, such as its size, mouse position, and any pressed keys.
+
+If the `draw` callback returns a value, this value will be used as the component's initial state.
+
+```ts
+// Example.tsx
+import React from "react";
+import Decal, { DC, FC } from "../Decal";
+
+const draw: DC = (ctx, assets, info) => {
+	const { x, y } = info.center;
+	ctx.ellipse(x, y, 100, 100, 0, 0, Math.PI * 2);
+	ctx.stroke();
+};
+
+const Example: React.FC = () => {
+	return <Decal height={320} width={480} draw={draw} />;
+};
+
+export default Example;
+```
+
+### Using Animation
+
+If an `onFrame` prop is provided, then the component will run this prop's callback once every animation frame (sixty times per second).
+
+```ts
+// Example.tsx
+import React from "react";
+import Decal, { DC, FC } from "../Decal";
+
+const draw: DC = (ctx, assets, info) => {
+	const { x, y } = info.center;
+	ctx.ellipse(x, y, 100, 100, 0, 0, Math.PI * 2);
+	ctx.stroke();
+	ctx.textAlign = "center";
+};
+
+const onFrame: DC = (ctx, assets, info) => {
+	ctx.fillText(new Date().toLocaleTimeString("en-gb"), 0, 0);
+};
+
+const Example: React.FC = () => {
+	return <Decal height={320} width={480} draw={draw} onFrame={onFrame} />;
+};
+
+export default Example;
+```
+
+Often, this callback will make use of the information provided to it, either through its state:
+
+```ts
+// Example.tsx
+import React from "react";
+import Decal, { DC, FC } from "../Decal";
+
+const initial = {
+	radius: 100,
+	delta: 1
+};
+
+type S = typeof initial;
+
+const draw: DC<S> = (ctx, assets, info) => {
+	return initial;
+};
+
+const onFrame: FC<S> = (ctx, state, assets, info) => {
+	const { x, y } = info.center;
+
+	if (state.radius < 50) {
+		state.delta = 1;
+	} else if (state.radius > 100) {
+		state.delta = -1;
+	}
+
+	state.radius += state.delta;
+
+	ctx.beginPath();
+	ctx.ellipse(x, y, state.radius, state.radius, 0, 0, Math.PI * 2);
+	ctx.stroke();
+};
+
+const Example: React.FC = () => {
+	return <Decal height={320} width={480} draw={draw} onFrame={onFrame} />;
+};
+
+export default Example;
+```
+
+Or through the `info` object:
+
+```ts
+// Example.tsx
+import React from "react";
+import Decal, { DC, FC } from "../Decal";
+
+const draw: DC = () => {};
+
+const onFrame: FC = (ctx, state, assets, info) => {
+	const { x, y } = info.center;
+
+	const radius = Math.hypot(info.mouse.x - x, info.mouse.y - y);
+
+	ctx.beginPath();
+	ctx.ellipse(x, y, radius, radius, 0, 0, Math.PI * 2);
+	ctx.stroke();
+};
+
+const Example: React.FC = () => {
+	return <Decal height={320} width={480} draw={draw} onFrame={onFrame} />;
+};
+
+export default Example;
+```
+
+### Using State
+
+Decal's callbacks use an optional, mutable state. The initial value of this state is the value (if any) returned from the `draw` callback. Any other callback may directly modify the state. Any change will be present for future callbacks.
+
+It's recommended to type the state and pass this type to callbacks.
+
+```ts
+// Example.tsx
+import React from "react";
+import Decal, { DC, FC } from "../Decal";
+
+const initial = {
+	count: 0
+};
+
+type S = typeof initial;
+
+const draw: DC<S> = (ctx, assets, info) => {
+	ctx.translate(info.center.x, info.center.y);
+	ctx.textAlign = "center";
+	return initial;
+};
+
+const onFrame: FC<S> = (ctx, state, assets, info) => {
+	ctx.fillText((state.count++).toString(), 0, 0);
+};
+
+const Example: React.FC = () => {
+	return <Decal height={320} width={480} draw={draw} onFrame={onFrame} />;
+};
+
+export default Example;
+```
+
+### Using Assets
+
+Decal can pre-load load images so that image elements are available inside of all callbacks. To use this feature, provide a value for the component's `assets` prop. The type of this prop is complex: it accepts an object comprised of properties that either point to image URLs, or to arrays of image URLs, or other objects that repeat this pattern.
+
+```ts
+const assets = {
+	photo: "nora.jpg",
+	friends: [
+		"alice.jpg",
+		"jordan.jpg"
+		"lee.jpg"
+	],
+	pets: {
+		dogs: ["kyle.jpg", "warren.jpg"],
+		cats: ["kellog.jpg", "whisper.jpg"]
+	}
+}
+
+```
+
+In callbacks, the shape of this object will be preserved, with each URL replaced with the `HTMLImage` element fetched for the URL.
+
+```ts
+// Example.tsx
+import React from "react";
+import Decal, { DC } from "../Decal";
+
+const assets = {
+	kitten: "kitten.jpg"
+};
+
+const draw: DC = (ctx, assets, info) => {
+	const { x, y } = info.center;
+	const { kitten } = assets;
+	ctx.drawImage(kitten, x - kitten.width / 2, y - kitten.height / 2);
+};
+
+const Example: React.FC = () => {
+	return <Decal height={320} width={480} draw={draw} assets={assets} />;
+};
+
+export default Example;
+```
+
+## Props
+
+#### ▸ width
+
+The width of the canvas.
+
+```ts
+type Width = number;
+```
+
+#### ▸ height
+
+The height of the canvas.
+
+```ts
+type Height = number;
+```
+
+#### ▸ draw
+
+Draw is the minimal surface of Decal. If this function returns a value, then that value will define the component's initial state. See **Drawing to the Canvas** for more information and examples about drawing with Decal.
+
+```ts
+type DC<T> = (
+	ctx: CanvasRenderingContext2D,
+	assets: Assets,
+	info: Info
+) => State;
+```
+
+#### ▸ onFrame `(optional)`
+
+Draw is the minimal surface of Decal. If this function returns a value, then that value will define the component's initial state. See **Using Animation** for more information and examples about frame-by-frame animation with Decal. Defaults to `undefined`.
+
+```ts
+type FC<T> = (
+	ctx: CanvasRenderingContext2D,
+	state: State,
+	assets: Assets,
+	info: Info
+) => State;
+```
+
+#### ▸ assets `(optional)`
+
+An object that defines the URLs of any images to use as assets. See **Using Assets** for more information and examples about using assets with Decal. Defaults to `undefined`.
+
+```ts
+type Assets = {
+	[key: string]: string | string[] | Assets;
+};
+```
+
+#### ▸ wipe `(optional)`
+
+Whether to clear the canvas between frames. Defaults to `true`.
+
+```ts
+type Wipe = boolean;
+```
 
 ---
 
