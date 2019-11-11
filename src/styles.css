@@ -1,0 +1,16 @@
+.App {
+	font-family: sans-serif;
+	text-align: center;
+}
+
+.keys {
+	margin: 8px 0;
+}
+
+.key {
+	margin: 8px 4px;
+	padding: 2px 4px;
+	background-color: #eee;
+	border-radius: 2px;
+	border: 1px solid #aaa;
+}

@@ -1,2 +1,3 @@
 # react-decal
- A miniature canvas game engine in React.
+
+A miniature Decal game engine in React.
