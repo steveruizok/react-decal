@@ -19,7 +19,7 @@ type S = {
 	mouse: Vec2d
 }
 
-const draw: DC<S> = (ctx, assets, info) => {
+const draw: DC<S> = ({ ctx, assets, info }) => {
 	const { center } = info
 
 	return {
@@ -31,11 +31,11 @@ const draw: DC<S> = (ctx, assets, info) => {
 	}
 }
 
-const onFrame: FC<S> = (ctx, state, assets, info) => {
+const onFrame: FC<S> = ({ ctx, state, assets, info }) => {
 	const { mover, mouse } = state
 
 	mouse.set(info.mouse.x, info.mouse.y)
-	mover.rotation = mover.point.angle(mouse)
+	mover.rotation = mover.point.angleTo(mouse)
 
 	// Paint ship
 	ctx.beginPath()

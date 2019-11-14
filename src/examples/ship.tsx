@@ -23,7 +23,7 @@ type State = {
 	}
 }
 
-const draw: DC<State> = (state, assets, info) => {
+const draw: DC<State> = ({ info }) => {
 	const { center } = info
 
 	return {
@@ -35,7 +35,7 @@ const draw: DC<State> = (state, assets, info) => {
 	}
 }
 
-const onFrame: FC<State> = (ctx, state, assets, info) => {
+const onFrame: FC<State> = ({ ctx, state, info }) => {
 	const { keys } = info
 	const { ship } = state
 

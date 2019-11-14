@@ -16,7 +16,7 @@ type S = {
 	inner: Vec2d[]
 }
 
-const draw: DC<S> = (ctx, assets, info) => {
+const draw: DC<S> = ({ info }) => {
 	const { width, height } = info.size
 
 	return {
@@ -35,7 +35,7 @@ const draw: DC<S> = (ctx, assets, info) => {
 	}
 }
 
-const onFrame: FC<S> = (ctx, state, assets, info) => {
+const onFrame: FC<S> = ({ ctx, state, info }) => {
 	const { corners, inner } = state
 
 	ctx.beginPath()

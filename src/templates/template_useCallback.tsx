@@ -13,26 +13,34 @@ has no dependencies, then move it outside of the component's function.
 */
 
 import React, { useCallback } from 'react'
-import Decal, { DC, FC, MC, KC } from '../components/Decal'
+import Decal, { DC, FC, MC, KC } from '../Decal'
 
 const FunctionalTemplate: React.FC = (props) => {
 	type S = {}
 
-	const draw = useCallback<DC<S>>((ctx, info) => {
+	const draw = useCallback<DC<S>>(({ ctx, assets, info }) => {
 		return {} // initial state
 	}, [])
 
-	const onFrame = useCallback<FC<S>>((ctx, state, info) => {}, [])
+	const onFrame = useCallback<FC<S>>(({ ctx, state, assets, info }) => {}, [])
 
-	const onClick = useCallback<MC<S>>((event, state, info) => {}, [])
+	const onClick = useCallback<MC<S>>(({ event, state, assets, info }) => {}, [])
 
-	const onMouseMove = useCallback<MC<S>>((event, state, info) => {}, [])
+	const onMouseMove = useCallback<MC<S>>(({ event, state, assets, info }) => {},
+	[])
 
-	const onMouseEnter = useCallback<MC<S>>((event, state, info) => {}, [])
+	const onMouseEnter = useCallback<MC<S>>(
+		({ event, state, assets, info }) => {},
+		[]
+	)
 
-	const onMouseLeave = useCallback<MC<S>>((event, state, info) => {}, [])
+	const onMouseLeave = useCallback<MC<S>>(
+		({ event, state, assets, info }) => {},
+		[]
+	)
 
-	const onKeyPress = useCallback<KC<S>>((event, state, info) => {}, [])
+	const onKeyPress = useCallback<KC<S>>(({ event, state, assets, info }) => {},
+	[])
 
 	return (
 		<Decal

@@ -14,21 +14,21 @@ import Decal, { DC, FC, MC, KC } from '../Decal'
 
 type S = {}
 
-const draw: DC<S> = (ctx, info) => {
+const draw: DC<S> = ({ ctx, assets, info }) => {
 	return {} // initial state
 }
 
-const onFrame: FC<S> = (ctx, state, info) => {}
+const onFrame: FC<S> = ({ ctx, state, assets, info }) => {}
 
-const onClick: MC<S> = (event, state, info) => {}
+const onClick: MC<S> = ({ event, state, assets, info }) => {}
 
-const onMouseMove: MC<S> = (event, state, info) => {}
+const onMouseMove: MC<S> = ({ event, state, assets, info }) => {}
 
-const onMouseEnter: MC<S> = (event, state, info) => {}
+const onMouseEnter: MC<S> = ({ event, state, assets, info }) => {}
 
-const onMouseLeave: MC<S> = (event, state, info) => {}
+const onMouseLeave: MC<S> = ({ event, state, assets, info }) => {}
 
-const onKeyPress: KC<S> = (event, state, info) => {}
+const onKeyPress: KC<S> = ({ event, state, assets, info }) => {}
 
 const Template: React.FC = (props) => {
 	return (
