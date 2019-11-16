@@ -1,22 +1,24 @@
-import * as React from "react";
-import { render } from "react-dom";
-import Drawing from "./examples/drawing";
-import MouseHunter from "./examples/mouseHunter";
-import Ship from "./examples/ship";
-import Hall from "./examples/hall";
-import Assets from "./examples/assets";
-import ShadowCasting from "./examples/shadowcasting";
-import ShadowCasting2 from "./examples/shadowcasting2";
+import * as React from "react"
+import { render } from "react-dom"
+import Drawing from "./examples/drawing"
+import MouseHunter from "./examples/mouseHunter"
+import Ship from "./examples/ship"
+import Hall from "./examples/hall"
+import Assets from "./examples/assets"
+import RayTracing from "./examples/raytracing/raytracing"
+// import ShadowCasting2 from "./examples/shadowcasting2";
 
-import "./styles.css";
+import "./styles.css"
 
 function App() {
   return (
     <div className="App">
-      <h1>ShadowCasting</h1>
+      <h1>RayCasting</h1>
+      <RayTracing />
+      {/* <h1>ShadowCasting</h1>
       <ShadowCasting />
       <h1>ShadowCasting2</h1>
-      <ShadowCasting2 />
+      <ShadowCasting2 /> */}
       {/* <h1>Drawing</h1>
 			<Drawing />
 			<h1>Mouse Hunter</h1>
@@ -33,8 +35,8 @@ function App() {
 			<h1>Assets</h1>
 			<Assets /> */}
     </div>
-  );
+  )
 }
 
-const rootElement = document.getElementById("root");
-render(<App />, rootElement);
+const rootElement = document.getElementById("root")
+render(<App />, rootElement)
