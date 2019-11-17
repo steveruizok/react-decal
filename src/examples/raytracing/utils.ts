@@ -41,11 +41,26 @@ export function addPoints3(p1: Point3, p2: Point3) {
   }
 }
 
-export function subtractPoints(point1: Point3, point2: Point3) {
+export function subtractPoints2(point1: Point2, point2: Point2) {
+  return {
+    x: point1.x - point2.x,
+    y: point1.y - point2.y
+  }
+}
+
+export function subtractPoints3(point1: Point3, point2: Point3) {
   return {
     x: point1.x - point2.x,
     y: point1.y - point2.y,
     z: point1.z - point2.z
+  }
+}
+
+export function dividePoints3(point1: Point3, point2: Point3) {
+  return {
+    x: point1.x / point2.x,
+    y: point1.y / point2.y,
+    z: point1.z / point2.z
   }
 }
 

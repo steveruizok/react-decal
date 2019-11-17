@@ -13,7 +13,7 @@ import {
 import { findLast } from "lodash-es"
 import { Machine, interpret } from "xstate"
 import { castRay } from "./castRay2"
-import { subtractPoints, pointsAreEqual, addPoints3 } from "./utils"
+import { subtractPoints3, pointsAreEqual, addPoints3 } from "./utils"
 
 const machine = Machine(
   {
@@ -296,7 +296,7 @@ const onMouseMove: MC<S> = ({ event, ctx, state, assets, info }) => {
 
   const bStart = { x: 0, y: 0, z: 1.5 }
   const bEnd = mousePoint
-  const direction = subtractPoints(bEnd, bStart)
+  const direction = subtractPoints3(bEnd, bStart)
 
   const result = castRay(
     bStart,

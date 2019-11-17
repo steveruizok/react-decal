@@ -1,7 +1,4 @@
 import { Point3 } from "./types"
-import { uniq } from "lodash-es"
-
-const NARROW_TESTS = 10
 
 export function castRay(
   from: Point3,
@@ -17,45 +14,21 @@ export function castRay(
   point: Point3
   path: Point3[]
 } {
+  const max = Math.max(direction.x, direction.y, direction.z)
+  const step = dividePointBy(direction, max)
+  const broadStep = dividePointBy(step, broadTests)
+  const narrowStep = dividePointBy(step, narrowTests)
+
   const path = new Set<string>([])
 
-  // For steps, normalize step against longest dimension
-  const max = Math.max(direction.x, direction.y, direction.z)
-
-  // A broad step is a full integer step in the max dimension
-  const step = {
-    x: direction.x / max / broadTests,
-    y: direction.y / max / broadTests,
-    z: direction.z / max / broadTests
-  }
-
-  // A narrow step is a more fine division of the broad step
-  const narrowStep = {
-    x: step.x / narrowTests,
-    y: step.y / narrowTests,
-    z: step.z / narrowTests
-  }
-
-  // Copy the origin for our broad phase point
   const broadPoint: Point3 = { ...from }
-  let position: Point3 = { ...from }
 
   for (let i = 0; i < maxDistance * broadTests; i++) {
-    position = {
-      x: Math.round(broadPoint.x),
-      y: Math.round(broadPoint.y),
-      z: Math.round(broadPoint.z)
-    }
+    const position = getRoundedPoint(broadPoint)
 
-    // Keep track of the positions at each step
-    path.add(`${position.x}_${position.y}_${position.z}`)
+    path.add(positionToPath(position))
 
-    // Test the broad step
-    const broadHit = hitTestBroad(broadPoint, position)
-
-    // If we have a broad hit, switch to the narrow phase.
-    if (broadHit) {
-      // If we don't have a narrow phase test, stop the ray!
+    if (hitTestBroad(broadPoint, position)) {
       if (hitTestNarrow === undefined) {
         return {
           hit: true,
@@ -64,23 +37,12 @@ export function castRay(
           path: pathToPoints(path)
         }
       } else {
-        // ...but if we do have a narrow phase test, make
-        // small steps and test at each point.
-
-        // Copy the broad point for our narrow phase point
         const narrowPoint: Point3 = { ...broadPoint }
 
         for (let j = 0; j < narrowTests; j++) {
-          // Step the narrow point
-          narrowPoint.x += narrowStep.x
-          narrowPoint.y += narrowStep.y
-          narrowPoint.z += narrowStep.z
+          bumpPoint(narrowPoint, narrowStep)
 
-          // Test for a hit at this point
-          const narrowHit = hitTestNarrow(narrowPoint, position)
-
-          // If we have a narrow hit,  stop the ray!
-          if (narrowHit) {
+          if (hitTestNarrow(narrowPoint, position)) {
             return {
               hit: true,
               point: narrowPoint,
@@ -88,22 +50,14 @@ export function castRay(
               path: pathToPoints(path)
             }
           }
-
-          // If we didn't have a narrow phase hit, then continue until
-          // we get a hit or run out of tests
         }
       }
     }
-    // If we didn't have a broad phase hit, or if we had a narrow
-    // test and we've run out of narrow tests without a narrow phase
-    // hit, then step our point and continue with broad phase steps
-
-    broadPoint.x += step.x
-    broadPoint.y += step.y
-    broadPoint.z += step.z
+    bumpPoint(broadPoint, broadStep)
   }
 
-  // If we've run out of broad phase steps, stop the ray!
+  const position = getRoundedPoint(broadPoint)
+
   return {
     hit: false,
     point: broadPoint,
@@ -112,9 +66,81 @@ export function castRay(
   }
 }
 
+/* --------------------------------- Helpers -------------------------------- */
+
+function positionToPath(position: Point3) {
+  return `${position.x}_${position.y}_${position.z}`
+}
 function pathToPoints(path: Set<string>) {
   return Array.from(path.values()).map(p => {
     const [x, y, z] = p.split("_").map(c => parseFloat(c))
     return { x, y, z }
   })
 }
+
+export function dividePointBy(p1: Point3, n: number) {
+  return {
+    x: p1.x / n,
+    y: p1.y / n,
+    z: p1.z / n
+  }
+}
+
+export function getRoundedPoint(p1: Point3) {
+  return {
+    x: Math.round(p1.x),
+    y: Math.round(p1.y),
+    z: Math.round(p1.z)
+  }
+}
+
+export function bumpPoint(p1: Point3, p2: Point3) {
+  p1.x += p2.x
+  p1.y += p2.y
+  p1.z += p2.z
+}
+
+/*
+Notes --------
+
+[1]
+To get a step, divide each dimension (x, y, z) by the longest dimension, so
+that the longest dimension is our "normal" (1) dimension. We'll move along 
+that dimension in full integer steps.
+
+A step is a full integer step along the longest dimension.
+A broad step is a big division of this full step.
+A narrow step is a more fine division of the full step.
+
+[2]
+The path is a collection of visited positions. We'll use a set in order
+to prevent duplicates.
+
+[3]
+We'll start our broad phase tests with a copy of the from point. 
+We'll be mutating this copy after each broad step.
+
+[4]
+Here's our broad phase loop.
+
+[5]
+Get the position of this step and add it to our set.
+
+[6]
+Run the broad phase test to discover whether or not the current broad 
+phase point should "hit" something.
+
+[7]
+If the broad phase hits, then first check whether we have an (optional) narrow
+phase test. If not, then stop the process and return the hit.
+
+[8]
+If we do have a narrow test, then enter the narrow test phase. Start by creating
+a new copy of the current broad phase point so that we can bump this copy
+forward separately.
+
+[9]
+Here we'll start by bumping the point.
+
+...
+*/
