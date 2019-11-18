@@ -6,6 +6,8 @@ import Ship from "./examples/ship"
 import Hall from "./examples/hall"
 import Assets from "./examples/assets"
 import RayTracing from "./examples/raytracing/raytracing"
+import RayCast2d from "./examples/raycast2d"
+import RayCastAngle2d from "./examples/raycastAngle2d"
 // import ShadowCasting2 from "./examples/shadowcasting2";
 
 import "./styles.css"
@@ -13,8 +15,12 @@ import "./styles.css"
 function App() {
   return (
     <div className="App">
-      <h1>RayCasting</h1>
-      <RayTracing />
+      {/* <h1>RayCasting</h1> */}
+      {/* <RayTracing /> */}
+      <h1>RayCast 2d</h1>
+      <RayCast2d />
+      <h1>RayCast Angle 2d</h1>
+      <RayCastAngle2d />
       {/* <h1>ShadowCasting</h1>
       <ShadowCasting />
       <h1>ShadowCasting2</h1>
