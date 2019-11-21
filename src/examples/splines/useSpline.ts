@@ -17,6 +17,7 @@ export function useSpline(numberOfSegments = 25) {
       c[p++] = st3 - st2
     }
     c[++p] = 1
+    return c
   }, [numberOfSegments])
 
   const pointsToSpline = React.useCallback(

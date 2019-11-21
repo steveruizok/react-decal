@@ -745,6 +745,7 @@ class Visible {
     )
   }
 }
+
 type S = {
   map: Rectangle[]
   visible: Visible

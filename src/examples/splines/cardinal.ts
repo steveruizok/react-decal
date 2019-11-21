@@ -8,6 +8,8 @@
 // 1.
 // First, let's decide how many extra points we'll put between each point.
 
+export function useSpline(numberOfSegments = 25) {}
+
 const numberOfSegments = 25
 
 // 2.

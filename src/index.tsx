@@ -9,15 +9,16 @@ import Assets from "./examples/assets"
 import RayTracing from "./examples/raytracing/raytracing"
 import RayCast2d from "./examples/raycast2d"
 import RayCastAngle2d from "./examples/raycastAngle2d"
-// import ShadowCasting2 from "./examples/shadowcasting2";
+import ShadowCasting2 from "./examples/shadowcasting2"
+import ShadowCasting3 from "./examples/shadowcasting3"
 
 import "./styles.css"
 
 function App() {
   return (
     <div className="App">
-      <h1>Splines</h1>
-      <Splines />
+      {/* <h1>Splines</h1>
+      <Splines /> */}
       {/* <RayTracing /> */}
       {/* <h1>RayCasting</h1> */}
       {/* <RayTracing /> */}
@@ -25,10 +26,10 @@ function App() {
       <RayCast2d />
       <h1>RayCast Angle 2d</h1>
       <RayCastAngle2d /> */}
-      {/* <h1>ShadowCasting</h1>
-      <ShadowCasting />
-      <h1>ShadowCasting2</h1>
-      <ShadowCasting2 /> */}
+      {/* {/* <h1>ShadowCasting</h1>
+      <ShadowCasting /> */}
+      <h1>ShadowCasting3</h1>
+      <ShadowCasting3 />
       {/* <h1>Drawing</h1>
 			<Drawing />
 			<h1>Mouse Hunter</h1>
