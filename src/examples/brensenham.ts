@@ -1,4 +1,4 @@
-import { Point3, Point2 } from "./raytracing/types"
+import { Point3, Point2 } from "./types"
 
 export function drawLine3d(
   from: Point3,

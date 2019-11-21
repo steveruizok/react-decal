@@ -36,12 +36,12 @@ const Template: React.FC = props => {
       height={320}
       width={480}
       draw={draw}
-      onFrame={onFrame}
-      onClick={onClick}
-      onMouseMove={onMouseMove}
-      onMouseLeave={onMouseLeave}
-      onMouseEnter={onMouseEnter}
-      onKeyPress={onKeyPress}
+      // onFrame={onFrame}
+      // onClick={onClick}
+      // onMouseMove={onMouseMove}
+      // onMouseLeave={onMouseLeave}
+      // onMouseEnter={onMouseEnter}
+      // onKeyPress={onKeyPress}
       wipe={true}
     />
   )

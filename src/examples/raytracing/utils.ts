@@ -1,4 +1,4 @@
-import { Point2, Point3 } from "./types"
+import { Point2, Point3 } from "../types"
 
 export const transform = (
   value: number,

@@ -2,6 +2,7 @@ import * as React from "react"
 import { render } from "react-dom"
 import Drawing from "./examples/drawing"
 import MouseHunter from "./examples/mouseHunter"
+import Splines from "./examples/splines/splines"
 import Ship from "./examples/ship"
 import Hall from "./examples/hall"
 import Assets from "./examples/assets"
@@ -15,12 +16,15 @@ import "./styles.css"
 function App() {
   return (
     <div className="App">
+      <h1>Splines</h1>
+      <Splines />
+      {/* <RayTracing /> */}
       {/* <h1>RayCasting</h1> */}
       {/* <RayTracing /> */}
-      <h1>RayCast 2d</h1>
+      {/* <h1>RayCast 2d</h1>
       <RayCast2d />
       <h1>RayCast Angle 2d</h1>
-      <RayCastAngle2d />
+      <RayCastAngle2d /> */}
       {/* <h1>ShadowCasting</h1>
       <ShadowCasting />
       <h1>ShadowCasting2</h1>

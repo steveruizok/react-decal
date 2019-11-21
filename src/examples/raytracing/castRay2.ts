@@ -1,4 +1,4 @@
-import { Point3 } from "./types"
+import { Point3 } from "../types"
 
 export function castRay(
   from: Point3,

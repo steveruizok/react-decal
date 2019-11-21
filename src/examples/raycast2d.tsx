@@ -1,7 +1,7 @@
 import React from "react"
 import Decal, { DC, FC, MC, KC } from "../Decal"
 import { range } from "lodash"
-import { Point2 } from "./raytracing/types"
+import { Point2 } from "./types"
 import { drawLine2d } from "./brensenham"
 import { castRay2d } from "./linesAndRays/castRay2d"
 
@@ -92,8 +92,11 @@ const onMouseMove: MC<S> = ({ event, ctx, state, assets, info }) => {
       state.start,
       direction,
       ({ point, position }) => {
+        // console.log(point, position)
         for (let block of state.blocks) {
-          if (ctx.isPointInPath(block, point.x * scale, point.y * scale)) {
+          if (
+            ctx.isPointInPath(block, position.x * scale, position.y * scale)
+          ) {
             return block
           }
         }

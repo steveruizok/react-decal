@@ -1,4 +1,4 @@
-import { Point2 } from "../raytracing/types"
+import { Point2 } from "../types"
 
 export function castRay2d<T = any>(
   from: Point2,
@@ -90,9 +90,14 @@ export function castRay2d<T = any>(
     y: direction.y / stepLength
   }
 
-  const positionDelta = {
+  const step = {
     x: delta.x > 0 ? 1 : -1,
     y: delta.y > 0 ? 1 : -1
+  }
+
+  const positionDelta = {
+    x: step.x > 0 ? position.x + 1 - from.x : from.x - position.x,
+    y: step.y > 0 ? position.y + 1 - from.y : from.y - position.y
   }
 
   const stepDelta = {
@@ -101,8 +106,8 @@ export function castRay2d<T = any>(
   }
 
   const stepped = {
-    x: stepDelta.x < Infinity ? stepDelta.x : Infinity,
-    y: stepDelta.y < Infinity ? stepDelta.y : Infinity
+    x: stepDelta.x < Infinity ? stepDelta.x * positionDelta.x : Infinity,
+    y: stepDelta.y < Infinity ? stepDelta.y * positionDelta.y : Infinity
   }
 
   let hit: any
@@ -115,14 +120,14 @@ export function castRay2d<T = any>(
   let distance = 0
 
   function moveAlongXAxis() {
-    position.x += positionDelta.x
+    position.x += step.x
     stepped.x += stepDelta.x
     steppedDistance = stepped.x
     steppedIndex = 0
   }
 
   function moveAlongYAxis() {
-    position.y += positionDelta.y
+    position.y += step.y
     stepped.y += stepDelta.y
     steppedDistance = stepped.y
     steppedIndex = 1
@@ -132,14 +137,13 @@ export function castRay2d<T = any>(
     distance++
 
     stepped.x < stepped.y ? moveAlongXAxis() : moveAlongYAxis()
-
     positions.push({ ...position })
 
     point.x = from.x + steppedDistance * delta.x
     point.y = from.y + steppedDistance * delta.y
 
-    normal.x = steppedIndex === 0 ? -positionDelta.x : 0
-    normal.y = steppedIndex === 1 ? -positionDelta.y : 0
+    normal.x = steppedIndex === 0 ? -step.x : 0
+    normal.y = steppedIndex === 1 ? -step.y : 0
 
     hit = hitTest({
       point,
