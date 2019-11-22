@@ -1,6 +1,6 @@
-import { transform } from "./utils"
+import { transform } from "./examples/raytracing/utils"
 import { range, flatten, compact } from "lodash-es"
-import { addPoints2 } from "./utils"
+import { addPoints2 } from "./examples/raytracing/utils"
 
 const scale = 32,
   ratioX = 2,
@@ -261,3 +261,34 @@ export type Position = {
 }
 
 export type World = ReturnType<typeof getIsoWorld>
+
+export function isPointInCube(hit: Point3, point: Point3, size: Point3) {
+  return !(
+    hit.x < point.x ||
+    hit.x > point.x + size.x ||
+    hit.y < point.y ||
+    hit.y > point.y + size.y ||
+    hit.z < point.z || // below are still hits
+    hit.z > point.z + size.z
+  )
+}
+
+export function paintCube(
+  ctx: CanvasRenderingContext2D,
+  origin: Point2,
+  cube: Cube,
+  color: string
+) {
+  ctx.save()
+  ctx.resetTransform()
+  ctx.translate(origin.x, origin.y)
+  ctx.fillStyle = color
+  ctx.fill(cube.paths.outline)
+  ctx.fillStyle = "rgba(0,0,0,.15)"
+  ctx.fill(cube.paths.southFace)
+  ctx.fillStyle = "rgba(0,0,0,.35)"
+  ctx.fill(cube.paths.eastFace)
+  ctx.strokeStyle = "#333"
+  ctx.stroke(cube.paths.outline)
+  ctx.restore()
+}

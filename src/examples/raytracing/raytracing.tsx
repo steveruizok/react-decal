@@ -9,7 +9,7 @@ import {
   Point3,
   screenToSpace,
   spaceToScreen
-} from "./iso"
+} from "../../iso"
 import { findLast } from "lodash-es"
 import { Machine, interpret } from "xstate"
 import { castRay } from "./castRay2"

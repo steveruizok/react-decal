@@ -11,6 +11,8 @@ import RayCast2d from "./examples/raycast2d"
 import RayCastAngle2d from "./examples/raycastAngle2d"
 import ShadowCasting2 from "./examples/shadowcasting2"
 import ShadowCasting3 from "./examples/shadowcasting3"
+import ShadowCasting4 from "./examples/shadows/"
+import ShadowCasting from "./examples/shadows/iso"
 
 import "./styles.css"
 
@@ -28,8 +30,8 @@ function App() {
       <RayCastAngle2d /> */}
       {/* {/* <h1>ShadowCasting</h1>
       <ShadowCasting /> */}
-      <h1>ShadowCasting3</h1>
-      <ShadowCasting3 />
+      <h1>ShadowCasting Iso</h1>
+      <ShadowCasting />
       {/* <h1>Drawing</h1>
 			<Drawing />
 			<h1>Mouse Hunter</h1>
