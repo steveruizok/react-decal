@@ -1,20 +1,19 @@
 .App {
-	font-family: sans-serif;
-	text-align: center;
+  font-family: sans-serif;
 }
 
 .keys {
-	margin: 8px 0;
+  margin: 8px 0;
 }
 
 .key {
-	margin: 8px 4px;
-	padding: 2px 4px;
-	background-color: #eee;
-	border-radius: 2px;
-	border: 1px solid #aaa;
+  margin: 8px 4px;
+  padding: 2px 4px;
+  background-color: #eee;
+  border-radius: 2px;
+  border: 1px solid #aaa;
 }
 
 canvas {
-	border: 1px solid #000;
+  border: 1px solid #000;
 }

@@ -1,29 +1,11 @@
-/*
-IN-COMPONENT TEMPLATE
-
-Here's a template for projects where you want your callbacks to occur
-inside of your component. You might want to do this, for example, if 
-your callbacks need to respond to the component's props.
-
-It's important that callbacks aren't generated fresh each time the 
-component updates.  If the callback is dependent on the component's state 
-or props, then place the callback inside of the component function's body 
-and memoize it using the `useCallback` hook. Otherwise, if the callback 
-has no dependencies, then move it outside of the component's function.
-*/
-
 import React, { useCallback } from "react"
 import Decal, { DC, FC, MC, KC } from "../../Decal"
 import { useShadowcast } from "../hooks/useShadowcast"
-import { castRay2d } from "../linesAndRays/castRay2d"
 import {
   getIsoWorld,
   makeCube,
   World,
-  Cube,
   Point2,
-  Point3,
-  Verts,
   screenToSpace,
   spaceToScreen,
   paintCube
@@ -34,9 +16,6 @@ type S = {
   origin: Point2
   world: World
 }
-
-const width = 640
-const height = 480
 
 const blocks = [
   { x: 2, y: 0, z: 1 },
@@ -64,6 +43,7 @@ const ShadowCaster: React.FC = props => {
   const getVisibilityPolgygon = useShadowcast(rectangles, 5, 5)
 
   const draw = useCallback<DC<S>>(({ ctx, assets, info }) => {
+    // Iso world
     const world = getIsoWorld(5, 5, 1, ({ x, y, z }) => true)
 
     // Drawing origin
@@ -77,6 +57,7 @@ const ShadowCaster: React.FC = props => {
       paintCube(ctx, origin, cube, "#ccc")
     }
 
+    // Visibility polygon
     const points = getVisibilityPolgygon({ x: 0, y: 0 })
     const pts = points.map(p => spaceToScreen({ x: p[0], y: p[1], z: 1 }))
     const visibilityPolygon = polygonToPath(
@@ -93,9 +74,12 @@ const ShadowCaster: React.FC = props => {
   const onFrame = useCallback<FC<S>>(({ ctx, state, assets, info }) => {
     const { world, origin } = state
 
+    // First layer of blocks
     for (let cube of world.cubes()) {
       paintCube(ctx, origin, cube, "#ccc")
     }
+
+    // Shadow
     ctx.save()
     const path = new Path2D(state.visibilityPolygon)
     path.rect(0, 0, info.size.width, info.size.height)
@@ -104,6 +88,7 @@ const ShadowCaster: React.FC = props => {
     ctx.fill(path, "evenodd")
     ctx.restore()
 
+    // Second layer of blocks
     for (let block of blocks) {
       const cube = makeCube(block)
       paintCube(ctx, origin, cube, "#ccc")
@@ -111,6 +96,7 @@ const ShadowCaster: React.FC = props => {
   }, [])
 
   const onMouseMove = useCallback<MC<S>>(({ event, state, assets, info }) => {
+    // Hovered position
     const pt = screenToSpace(
       {
         x: info.mouse.point.x - state.origin.x,
@@ -120,6 +106,7 @@ const ShadowCaster: React.FC = props => {
       false
     )
 
+    // Visibility polygon
     const points = getVisibilityPolgygon({ x: pt.x, y: pt.y })
     const pts = points.map(p => spaceToScreen({ x: p[0], y: p[1], z: 1 }))
     state.visibilityPolygon = polygonToPath(

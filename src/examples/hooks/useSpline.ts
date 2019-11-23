@@ -21,7 +21,7 @@ export function useSpline(numberOfSegments = 25) {
   }, [numberOfSegments])
 
   const pointsToSpline = React.useCallback(
-    (points: { x: number; y: number }[], tension = 0.5) => {
+    function pointsToSpline(points: { x: number; y: number }[], tension = 0.5) {
       let l = points.length
       let results = [] as { x: number; y: number }[]
 

@@ -74,6 +74,8 @@ export type Info = {
     width: number
     height: number
   }
+  frame: number
+  duration: number
   center: { x: number; y: number }
   mouse: {
     point: { x: number; y: number }
@@ -107,11 +109,14 @@ type Props<
   fps?: number
 }
 
+const defaultAssets = {}
+const defaultWipe = true
+
 export const Decal: React.FC<Props> = ({
   height,
   width,
-  assets = {},
-  wipe = true,
+  assets = defaultAssets,
+  wipe = defaultWipe,
   fps,
   draw,
   onFrame,
@@ -128,6 +133,8 @@ export const Decal: React.FC<Props> = ({
   const rAssetsPromise = useAssets(assets)
   const rAssets = React.useRef<any>()
   const rReady = React.useRef(false)
+
+  const start = React.useMemo(() => Date.now(), [onFrame])
 
   React.useEffect(() => {
     const load = async () => {
@@ -153,21 +160,10 @@ export const Decal: React.FC<Props> = ({
       hovered: false,
       clicked: false
     },
+    frame: 0,
+    duration: 0,
     keys: keyboard.keys.current
   })
-
-  // offset(point: { x: number; y: number }) {
-  //   return {
-  //     x: point.x - this.center.x,
-  //     y: point.y - this.center.y
-  //   }
-  // },
-  // normalize(point: { x: number; y: number }) {
-  //   return {
-  //     x: point.x - this.center.x / this.size.width,
-  //     y: point.y - this.center.y / this.size.height
-  //   }
-  // }
 
   // Persistent state
   const rState = React.useRef<ReturnType<typeof draw>>({})
@@ -176,6 +172,7 @@ export const Decal: React.FC<Props> = ({
   React.useEffect(() => {
     async function kickoff() {
       const cvs = rDecal.current
+
       if (cvs) {
         const ctx = cvs.getContext("2d")
 
@@ -187,14 +184,15 @@ export const Decal: React.FC<Props> = ({
 
           const asts = await rAssetsPromise.current
           rAssets.current = asts
+
           Object.assign(
             rState.current,
             draw({
               ctx,
               canvas: cvs,
               state: rState.current,
-              assets: asts,
-              info: rInfo.current
+              assets: { ...rAssets.current },
+              info: { ...rInfo.current }
             })
           )
           rReady.current = true
@@ -206,39 +204,44 @@ export const Decal: React.FC<Props> = ({
   }, [assets, rDecal, draw, cWidth, cHeight])
 
   // Draw on each animation frame (if onFrame is present)
-  const animationOnFrame = React.useCallback(() => {
-    if (!rAssets.current) return
-    const cvs = rDecal.current
-    if (cvs) {
-      const ctx = cvs.getContext("2d")
-      if (ctx) {
-        if (wipe) {
-          ctx.save()
-          ctx.resetTransform()
-          ctx.clearRect(0, 0, width, height)
-          ctx.restore()
+  const animationOnFrame = React.useCallback(
+    function animationOnFrame() {
+      if (!rAssets.current) return
+      const cvs = rDecal.current
+      if (cvs) {
+        const ctx = cvs.getContext("2d")
+        if (ctx) {
+          if (wipe) {
+            ctx.save()
+            ctx.resetTransform()
+            ctx.clearRect(0, 0, width, height)
+            ctx.restore()
+          }
+
+          rInfo.current.keys = keyboard.keys.current
+          rInfo.current.frame++
+          rInfo.current.duration = Date.now() - start
+
+          onFrame &&
+            onFrame({
+              ctx,
+              canvas: cvs,
+              state: rState.current,
+              assets: { ...rAssets.current },
+              info: { ...rInfo.current }
+            })
         }
-
-        rInfo.current.keys = keyboard.keys.current
-
-        onFrame &&
-          onFrame({
-            ctx,
-            canvas: cvs,
-            state: rState.current,
-            assets: rAssets.current,
-            info: rInfo.current
-          })
       }
-    }
-  }, [rAssets, rDecal, wipe, onFrame, height, width, keyboard])
+    },
+    [rAssets, rDecal, wipe, onFrame, height, width, keyboard]
+  )
 
   useAnimationFrame(onFrame ? animationOnFrame : null, fps)
 
   // Event helpers
 
   const getKeyboardEvent = React.useCallback(
-    (event: KeyboardEvent) => {
+    function getKeyboardEvent(event: KeyboardEvent) {
       const cvs = rDecal.current
       if (cvs) {
         const ctx = cvs.getContext("2d")
@@ -256,8 +259,8 @@ export const Decal: React.FC<Props> = ({
             canvas: cvs,
             ctx,
             state: rState.current,
-            assets: rAssets.current,
-            info: rInfo.current
+            assets: { ...rAssets.current },
+            info: { ...rInfo.current }
           }
         }
       }
@@ -266,7 +269,7 @@ export const Decal: React.FC<Props> = ({
   )
 
   const getMousePointEvent = React.useCallback(
-    (event: React.MouseEvent<HTMLCanvasElement>) => {
+    function getMousePointEvent(event: React.MouseEvent<HTMLCanvasElement>) {
       const cvs = rDecal.current
       if (cvs) {
         const cvs = rDecal.current
@@ -302,8 +305,8 @@ export const Decal: React.FC<Props> = ({
             canvas: cvs,
             ctx,
             state: rState.current,
-            assets: rAssets.current,
-            info: rInfo.current
+            assets: { ...rAssets.current },
+            info: { ...rInfo.current }
           }
         }
       }
@@ -326,33 +329,33 @@ export const Decal: React.FC<Props> = ({
   )
 
   const handleMouseDown = React.useCallback(
-    (event: React.MouseEvent<HTMLCanvasElement>) => {
+    function handleMouseDown(event: React.MouseEvent<HTMLCanvasElement>) {
       if (!rReady.current) return
 
       rInfo.current.mouse.clicked = true
       const args = getMousePointEvent(event)
       if (args) {
-        onMouseUp && onMouseUp.call(undefined, args)
+        onMouseDown && onMouseDown.call(undefined, args)
       }
     },
     [onMouseUp, getMousePointEvent]
   )
 
   const handleMouseUp = React.useCallback(
-    (event: React.MouseEvent<HTMLCanvasElement>) => {
+    function handleMouseUp(event: React.MouseEvent<HTMLCanvasElement>) {
       if (!rReady.current) return
 
       rInfo.current.mouse.clicked = false
       const args = getMousePointEvent(event)
       if (args) {
-        onMouseDown && onMouseDown.call(undefined, args)
+        onMouseUp && onMouseUp.call(undefined, args)
       }
     },
     [onMouseDown, getMousePointEvent]
   )
 
   const handleMouseMove = React.useCallback(
-    (event: React.MouseEvent<HTMLCanvasElement>) => {
+    function handleMouseMove(event: React.MouseEvent<HTMLCanvasElement>) {
       if (!rReady.current) return
 
       const args = getMousePointEvent(event)
@@ -364,7 +367,7 @@ export const Decal: React.FC<Props> = ({
   )
 
   const handleMouseEnter = React.useCallback(
-    (event: React.MouseEvent<HTMLCanvasElement>) => {
+    function handleMouseEnter(event: React.MouseEvent<HTMLCanvasElement>) {
       if (!rReady.current) return
 
       rInfo.current.mouse.hovered = true
@@ -377,7 +380,7 @@ export const Decal: React.FC<Props> = ({
   )
 
   const handleMouseLeave = React.useCallback(
-    (event: React.MouseEvent<HTMLCanvasElement>) => {
+    function handleMouseLeave(event: React.MouseEvent<HTMLCanvasElement>) {
       if (!rReady.current) return
 
       rInfo.current.mouse.hovered = false
@@ -390,7 +393,7 @@ export const Decal: React.FC<Props> = ({
   )
 
   const handleKeyPress = React.useCallback(
-    (event: KeyboardEvent) => {
+    function handleKeyPress(event: KeyboardEvent) {
       if (!rReady.current) return
 
       const args = getKeyboardEvent(event)

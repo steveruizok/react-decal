@@ -12,50 +12,54 @@ and memoize it using the `useCallback` hook. Otherwise, if the callback
 has no dependencies, then move it outside of the component's function.
 */
 
-import React, { useCallback } from 'react'
-import Decal, { DC, FC, MC, KC } from '../Decal'
+import React, { useCallback } from "react"
+import Decal, { DC, FC, MC, KC } from "../Decal"
 
-const FunctionalTemplate: React.FC = (props) => {
-	type S = {}
+type S = {}
 
-	const draw = useCallback<DC<S>>(({ ctx, assets, info }) => {
-		return {} // initial state
-	}, [])
+const FunctionalTemplate: React.FC = props => {
+  const draw = useCallback<DC<S>>(({ ctx, assets, info }) => {
+    return {}
+  }, [])
 
-	const onFrame = useCallback<FC<S>>(({ ctx, state, assets, info }) => {}, [])
+  const onFrame = useCallback<FC<S>>(({ ctx, state, assets, info }) => {}, [])
 
-	const onClick = useCallback<MC<S>>(({ event, state, assets, info }) => {}, [])
+  const onClick = useCallback<MC<S>>(({ event, state, assets, info }) => {}, [])
 
-	const onMouseMove = useCallback<MC<S>>(({ event, state, assets, info }) => {},
-	[])
+  const onMouseDown = useCallback<MC<S>>(({ event, state, assets, info }) => {},
+  [])
 
-	const onMouseEnter = useCallback<MC<S>>(
-		({ event, state, assets, info }) => {},
-		[]
-	)
+  const onMouseMove = useCallback<MC<S>>(({ event, state, assets, info }) => {},
+  [])
 
-	const onMouseLeave = useCallback<MC<S>>(
-		({ event, state, assets, info }) => {},
-		[]
-	)
+  const onMouseEnter = useCallback<MC<S>>(
+    ({ event, state, assets, info }) => {},
+    []
+  )
 
-	const onKeyPress = useCallback<KC<S>>(({ event, state, assets, info }) => {},
-	[])
+  const onMouseLeave = useCallback<MC<S>>(
+    ({ event, state, assets, info }) => {},
+    []
+  )
 
-	return (
-		<Decal
-			height={320}
-			width={480}
-			draw={draw}
-			onFrame={onFrame}
-			onClick={onClick}
-			onMouseMove={onMouseMove}
-			onMouseLeave={onMouseLeave}
-			onMouseEnter={onMouseEnter}
-			onKeyPress={onKeyPress}
-			wipe={true}
-		/>
-	)
+  const onKeyPress = useCallback<KC<S>>(({ event, state, assets, info }) => {},
+  [])
+
+  return (
+    <Decal
+      height={320}
+      width={480}
+      draw={draw}
+      onFrame={onFrame}
+      onClick={onClick}
+      onMouseDown={onMouseDown}
+      onMouseMove={onMouseMove}
+      onMouseLeave={onMouseLeave}
+      onMouseEnter={onMouseEnter}
+      onKeyPress={onKeyPress}
+      wipe={true}
+    />
+  )
 }
 
 export default FunctionalTemplate

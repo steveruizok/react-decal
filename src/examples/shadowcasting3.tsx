@@ -14,7 +14,7 @@ has no dependencies, then move it outside of the component's function.
 
 import React, { useCallback } from "react"
 import Decal, { DC, FC, MC, KC } from "../Decal"
-import { useShadowcast } from "./useShadowcast"
+import { useShadowcast } from "./hooks/useShadowcast"
 import { castRay2d } from "./linesAndRays/castRay2d"
 
 type S = {
