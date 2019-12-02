@@ -27,6 +27,34 @@ import "./styles.css"
 
 const routes = [
   {
+    name: "Ship",
+    path: "/ship",
+    component: Ship,
+    description: "A moving ship",
+    instructions: ["Press A and D to rotate.", "Pres W to move forward."]
+  },
+  {
+    name: "Hall",
+    path: "/hall",
+    component: Hall,
+    description: "A deep hall.",
+    instructions: []
+  },
+  {
+    name: "Assets",
+    path: "/assets",
+    component: Assets,
+    description: "An example of async assets.",
+    instructions: []
+  },
+  {
+    name: "MouseHunter",
+    path: "/mouseHunter",
+    component: MouseHunter,
+    description: "A mouse follower.",
+    instructions: []
+  },
+  {
     name: "Iso",
     path: "/iso/iso",
     component: Iso,
@@ -78,28 +106,14 @@ const routes = [
   },
   {
     name: "Iso Shadows",
-    path: "/iso/iso-shadows",
+    path: "/iso/isoShadows",
     component: IsoShadows,
     description: "An isometric world of cubes with shadowcasting.",
     instructions: []
   },
   {
     name: "Machine",
-    path: "/machine/machine",
-    component: MachineExample,
-    description: "A state-charts-based state machine.",
-    instructions: []
-  },
-  // {
-  //   name: "Machine Hooks",
-  //   path: "/machine/machine2",
-  //   component: MachineExampleHook,
-  //   description: "A hooks-based state-charts-based state machine.",
-  //   instructions: []
-  // },
-  {
-    name: "Machine Class Hook",
-    path: "/machine/machine3",
+    path: "/machine/machineClassHook",
     component: MachineClassHook,
     description: "A class-based-hook for state-charts-based state machine.",
     instructions: []
@@ -127,6 +141,16 @@ function App() {
                   <li key={i}>{p}</li>
                 ))}
               </ul>
+              {route.path && (
+                <div>
+                  <a
+                    target="_blank"
+                    href={`https://github.com/steveruizok/react-decal/blob/master/src/examples${route.path}.tsx`}
+                  >
+                    Source
+                  </a>
+                </div>
+              )}
             </Route>
           ))}
         </Switch>

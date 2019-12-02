@@ -353,13 +353,6 @@ const MachineExample: React.FC = props => {
         onMouseMove={onMouseMove}
       />
       <div>
-        <Button disabled={!can("UNDO")} onClick={() => send("UNDO")}>
-          Undo
-        </Button>
-        <Button disabled={!can("REDO")} onClick={() => send("REDO")}>
-          Redo
-        </Button>{" "}
-        |{" "}
         <Button active={isIn("pen")} onClick={() => send("SELECT_PEN")}>
           Pen
         </Button>
@@ -374,6 +367,14 @@ const MachineExample: React.FC = props => {
         </Button>
         <Button active={isIn("ellipse")} onClick={() => send("SELECT_ELLIPSE")}>
           Ellipse
+        </Button>
+      </div>
+      <div>
+        <Button disabled={!can("UNDO")} onClick={() => send("UNDO")}>
+          Undo
+        </Button>
+        <Button disabled={!can("REDO")} onClick={() => send("REDO")}>
+          Redo
         </Button>{" "}
         |{" "}
         <Button
@@ -410,7 +411,7 @@ const MachineExample: React.FC = props => {
           </Button>
         ))}
       </div>
-      <div>{current.name}</div>
+      <div>Current state: {[...current.path].reverse().join(" > ")}</div>
     </div>
   )
 }
