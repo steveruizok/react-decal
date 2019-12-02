@@ -1,8 +1,5 @@
 /*
-MOUSE HUNTER
-
-If your game does not require React, you're free to place your draw 
-and onFrame callbacks outside of your React component.
+HALL
 */
 
 import * as React from "react"
