@@ -14,6 +14,9 @@ import RayCastAngle2d from "./examples/raycastAngle2d"
 import ShadowCasting2 from "./examples/shadowcasting2"
 import ShadowCasting3 from "./examples/shadowcasting3"
 import ShadowCasting4 from "./examples/shadows/"
+import MachineExample from "./examples/machine/machine"
+// import MachineExampleHook from "./examples/machine/machineHook"
+import MachineClassHook from "./examples/machine/machineClassHook"
 import Shadows from "./examples/shadows/shadows"
 import Iso from "./examples/iso/iso"
 import IsoShadows from "./examples/iso/isoShadows"
@@ -78,6 +81,27 @@ const routes = [
     path: "/iso/iso-shadows",
     component: IsoShadows,
     description: "An isometric world of cubes with shadowcasting.",
+    instructions: []
+  },
+  {
+    name: "Machine",
+    path: "/machine/machine",
+    component: MachineExample,
+    description: "A state-charts-based state machine.",
+    instructions: []
+  },
+  // {
+  //   name: "Machine Hooks",
+  //   path: "/machine/machine2",
+  //   component: MachineExampleHook,
+  //   description: "A hooks-based state-charts-based state machine.",
+  //   instructions: []
+  // },
+  {
+    name: "Machine Class Hook",
+    path: "/machine/machine3",
+    component: MachineClassHook,
+    description: "A class-based-hook for state-charts-based state machine.",
     instructions: []
   }
 ]

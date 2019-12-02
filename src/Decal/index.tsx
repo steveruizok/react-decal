@@ -185,16 +185,7 @@ export const Decal: React.FC<Props> = ({
           const asts = await rAssetsPromise.current
           rAssets.current = asts
 
-          Object.assign(
-            rState.current,
-            draw({
-              ctx,
-              canvas: cvs,
-              state: rState.current,
-              assets: { ...rAssets.current },
-              info: { ...rInfo.current }
-            })
-          )
+          Object.assign(rState.current, drawFrame())
           rReady.current = true
         }
       }
@@ -202,6 +193,41 @@ export const Decal: React.FC<Props> = ({
 
     kickoff()
   }, [assets, rDecal, draw, cWidth, cHeight])
+
+  // Draw frame
+  const drawFrame = React.useCallback(() => {
+    let stateChange = {}
+    const cvs = rDecal.current
+
+    if (cvs) {
+      const ctx = cvs.getContext("2d")
+
+      if (ctx) {
+        if (wipe) {
+          ctx.save()
+          ctx.resetTransform()
+          ctx.clearRect(0, 0, width, height)
+          ctx.restore()
+        }
+
+        stateChange = draw({
+          ctx,
+          canvas: cvs,
+          state: rState.current,
+          assets: { ...rAssets.current },
+          info: { ...rInfo.current }
+        })
+      }
+    }
+
+    return stateChange
+  }, [draw])
+
+  React.useEffect(() => {
+    if (rReady.current) {
+      drawFrame()
+    }
+  }, [draw])
 
   // Draw on each animation frame (if onFrame is present)
   const animationOnFrame = React.useCallback(
@@ -246,13 +272,6 @@ export const Decal: React.FC<Props> = ({
       if (cvs) {
         const ctx = cvs.getContext("2d")
         if (ctx) {
-          if (wipe && !onFrame) {
-            ctx.save()
-            ctx.resetTransform()
-            ctx.clearRect(0, 0, width, height)
-            ctx.restore()
-          }
-
           rInfo.current.keys = keyboard.keys.current
           return {
             event,
@@ -278,13 +297,6 @@ export const Decal: React.FC<Props> = ({
           const { offsetLeft, offsetTop } = cvs
 
           const prev = rInfo.current.mouse
-
-          if (wipe && !onFrame) {
-            ctx.save()
-            ctx.resetTransform()
-            ctx.clearRect(0, 0, width, height)
-            ctx.restore()
-          }
 
           const point = {
             x: event.pageX - offsetLeft,
