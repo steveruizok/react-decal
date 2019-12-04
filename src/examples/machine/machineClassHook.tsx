@@ -1,6 +1,7 @@
-import React, { useCallback } from "react"
+import React from "react"
 import Decal, { DC, FC, MC, KC } from "../../Decal"
 import { useMachine } from "../hooks/useMachine2"
+import { Flex, Button, Text } from "rebass"
 
 type Point = {
   x: number
@@ -25,8 +26,10 @@ type Data = {
   lineWidths: number[]
 }
 
+function State<T>() {}
+
 const MachineExample: React.FC = props => {
-  const [current, data, send, { isIn, can }] = useMachine<Data>(
+  const { current, data, computed, send, isIn, can } = useMachine<Data>(
     {
       data: {
         backgroundColor: "#FFF",
@@ -304,6 +307,11 @@ const MachineExample: React.FC = props => {
         hasRedos: ({ redos }) => redos.length > 0,
         // Only if the machine has a current mark
         hasCurrentMark: ({ currentMark }) => currentMark !== undefined
+      },
+      compute: {
+        totalMarks: data => {
+          return data.marks.length
+        }
       }
     },
     false
@@ -342,7 +350,8 @@ const MachineExample: React.FC = props => {
   )
 
   return (
-    <div>
+    <Flex flexDirection="column" sx={{ width: 480 }}>
+      <ChangeControls can={can} send={send} />
       <Decal
         height={320}
         width={480}
@@ -352,94 +361,172 @@ const MachineExample: React.FC = props => {
         onMouseDown={onMouseDown}
         onMouseMove={onMouseMove}
       />
-      <div>
-        <Button active={isIn("pen")} onClick={() => send("SELECT_PEN")}>
-          Pen
-        </Button>
-        <Button active={isIn("eraser")} onClick={() => send("SELECT_ERASER")}>
-          Eraser
-        </Button>
-        <Button active={isIn("line")} onClick={() => send("SELECT_LINE")}>
-          Line
-        </Button>
-        <Button active={isIn("rect")} onClick={() => send("SELECT_RECT")}>
-          Rect
-        </Button>
-        <Button active={isIn("ellipse")} onClick={() => send("SELECT_ELLIPSE")}>
-          Ellipse
-        </Button>
-      </div>
-      <div>
-        <Button disabled={!can("UNDO")} onClick={() => send("UNDO")}>
-          Undo
-        </Button>
-        <Button disabled={!can("REDO")} onClick={() => send("REDO")}>
-          Redo
-        </Button>{" "}
-        |{" "}
-        <Button
-          disabled={!can("CLEAR_CANVAS")}
-          onClick={() => send("CLEAR_CANVAS")}
-        >
-          Clear
-        </Button>
-      </div>
-      <div>
-        {data.colors.map((color, index) => (
-          <button
-            key={index}
-            onClick={() => send("SET_COLOR", { color })}
-            style={{
-              backgroundColor: color,
-              height: 24,
-              width: 24,
-              border:
-                color === data.color ? "2px solid #000" : "2px solid #FFF",
-              outline: "none"
-            }}
-          ></button>
-        ))}
-      </div>
-      <div>
-        {data.lineWidths.map((lineWidth, index) => (
-          <Button
-            key={index}
-            onClick={() => send("SET_LINE_WIDTH", { lineWidth })}
-            active={lineWidth === data.lineWidth}
-          >
-            {lineWidth}
-          </Button>
-        ))}
-      </div>
-      <div>Current state: {[...current.path].reverse().join(" > ")}</div>
-    </div>
+      <ToolControls send={send} isIn={isIn} />
+      <ColorControls colors={data.colors} current={data.color} send={send} />
+      <SizeControls
+        current={data.lineWidth}
+        lineWidths={data.lineWidths}
+        send={send}
+      />
+      <Text>Total marks: {computed.totalMarks}</Text>
+      <Text>Current state: {[...current.path].reverse().join(" > ")}</Text>
+    </Flex>
   )
 }
 
 export default MachineExample
 
-type ButtonProps = {
+/* --------------- Controls Components -------------- */
+
+type RadioButtonProps = {
   onClick: any
   active?: boolean
   disabled?: boolean
 }
 
-const Button: React.FC<ButtonProps> = ({
+const RadioButton: React.FC<RadioButtonProps> = ({
   onClick,
   active = false,
   disabled = false,
-  children
+  children,
+  ...rest
 }) => {
   return (
-    <button
+    <Button
+      {...rest}
       onClick={onClick}
       disabled={disabled}
-      style={{
-        padding: "4px 12px",
-        fontWeight: active ? "bold" : "normal"
-      }}
+      opacity={disabled ? 0.5 : 1}
+      variant={active ? "primary" : "outline"}
+      mx={1}
     >
       {children}
-    </button>
+    </Button>
+  )
+}
+
+const ButtonRow: React.FC<any> = ({ children }) => {
+  return (
+    <Flex p={0} justifyContent="center" mt={2} mb={2}>
+      {children}
+    </Flex>
+  )
+}
+
+/* ------------------ Tool Controls ----------------- */
+
+const ToolControls: React.FC<any> = ({ send, isIn }) => {
+  const tools = [
+    { state: "Pen", event: "SELECT_PEN" },
+    { state: "Line", event: "SELECT_LINE" },
+    { state: "Eraser", event: "SELECT_ERASER" },
+    { state: "Rect", event: "SELECT_RECT" },
+    { state: "Ellipse", event: "SELECT_ELLIPSE" }
+  ]
+
+  return (
+    <ButtonRow>
+      {tools.map((tool, index) => (
+        <RadioButton
+          key={index}
+          active={isIn(tool.state.toLowerCase())}
+          onClick={() => send(tool.event)}
+        >
+          {tool.state}
+        </RadioButton>
+      ))}
+    </ButtonRow>
+  )
+}
+
+/* ----------------- Color Controls ----------------- */
+
+type ColorControlsProps = {
+  send: any
+  colors: string[]
+  current: string
+}
+
+const ColorControls: React.FC<ColorControlsProps> = ({
+  colors,
+  current,
+  send
+}) => {
+  const tools = [
+    { state: "Pen", event: "SELECT_PEN" },
+    { state: "Line", event: "SELECT_LINE" },
+    { state: "Eraser", event: "SELECT_ERASER" },
+    { state: "Rect", event: "SELECT_RECT" },
+    { state: "Ellipse", event: "SELECT_ELLIPSE" }
+  ]
+
+  return (
+    <ButtonRow>
+      {colors.map((color, index) => (
+        <Button
+          key={index}
+          onClick={() => send("SET_COLOR", { color })}
+          mx={1}
+          sx={{
+            backgroundColor: color,
+            height: 32,
+            width: 40,
+            border:
+              color === current
+                ? "3px solid rgba(0,0,0,.5)"
+                : "1px solid transparent"
+          }}
+        ></Button>
+      ))}
+    </ButtonRow>
+  )
+}
+
+/* --------------- Undo/Redo Controls --------------- */
+
+const ChangeControls: React.FC<any> = ({ can, send }) => {
+  return (
+    <ButtonRow>
+      <RadioButton disabled={!can("UNDO")} onClick={() => send("UNDO")}>
+        Undo
+      </RadioButton>
+      <RadioButton disabled={!can("REDO")} onClick={() => send("REDO")}>
+        Redo
+      </RadioButton>
+      <RadioButton
+        disabled={!can("CLEAR_CANVAS")}
+        onClick={() => send("CLEAR_CANVAS")}
+      >
+        Clear
+      </RadioButton>
+    </ButtonRow>
+  )
+}
+
+/* --------------- LineWidth Controls --------------- */
+
+type SizeControlsProps = {
+  lineWidths: number[]
+  current: number
+  send: any
+}
+
+const SizeControls: React.FC<SizeControlsProps> = ({
+  send,
+  current,
+  lineWidths = []
+}) => {
+  return (
+    <ButtonRow>
+      {lineWidths.map((lineWidth, index) => (
+        <RadioButton
+          key={index}
+          onClick={() => send("SET_LINE_WIDTH", { lineWidth })}
+          active={current === lineWidth}
+        >
+          {lineWidth}
+        </RadioButton>
+      ))}
+    </ButtonRow>
   )
 }

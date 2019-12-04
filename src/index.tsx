@@ -1,5 +1,8 @@
 import * as React from "react"
 import { render } from "react-dom"
+import { ThemeProvider } from "theme-ui"
+import theme from "@rebass/preset"
+
 import Drawing from "./examples/drawing"
 import MouseHunter from "./examples/mouseHunter"
 import Spline from "./examples/splines/spline"
@@ -122,40 +125,42 @@ const routes = [
 
 function App() {
   return (
-    <div className="App">
-      <Router>
-        <h1>Decal Examples</h1>
-        <ul>
-          {routes.map((route, i) => (
-            <li key={i}>
-              <Link to={route.path}>{route.name}</Link> — {route.description}
-            </li>
-          ))}
-        </ul>
-        <Switch>
-          {routes.map((route, i) => (
-            <Route key={i} path={route.path}>
-              <route.component />
-              <ul>
-                {route.instructions.map((p, i) => (
-                  <li key={i}>{p}</li>
-                ))}
-              </ul>
-              {route.path && (
-                <div>
-                  <a
-                    target="_blank"
-                    href={`https://github.com/steveruizok/react-decal/blob/master/src/examples${route.path}.tsx`}
-                  >
-                    Source
-                  </a>
-                </div>
-              )}
-            </Route>
-          ))}
-        </Switch>
-      </Router>
-    </div>
+    <ThemeProvider theme={theme}>
+      <div className="App">
+        <Router>
+          <h1>Decal Examples</h1>
+          <ul>
+            {routes.map((route, i) => (
+              <li key={i}>
+                <Link to={route.path}>{route.name}</Link> — {route.description}
+              </li>
+            ))}
+          </ul>
+          <Switch>
+            {routes.map((route, i) => (
+              <Route key={i} path={route.path}>
+                <route.component />
+                <ul>
+                  {route.instructions.map((p, i) => (
+                    <li key={i}>{p}</li>
+                  ))}
+                </ul>
+                {route.path && (
+                  <div>
+                    <a
+                      target="_blank"
+                      href={`https://github.com/steveruizok/react-decal/blob/master/src/examples${route.path}.tsx`}
+                    >
+                      Source
+                    </a>
+                  </div>
+                )}
+              </Route>
+            ))}
+          </Switch>
+        </Router>
+      </div>
+    </ThemeProvider>
   )
 }
 

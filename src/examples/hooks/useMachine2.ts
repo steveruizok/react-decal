@@ -11,7 +11,7 @@ export function useMachine<D extends IData>(
         {
           ...options,
           onChange: () => {
-            setState({ current: machine.current, data: { ...machine.data } })
+            dispatch({ type: "UPDATE_MACHINE", payload: machine })
           }
         },
         debug
@@ -19,17 +19,33 @@ export function useMachine<D extends IData>(
     []
   )
 
-  const [state, setState] = React.useState({
-    current: machine.current,
-    data: { ...machine.data }
-  })
-
-  const helpers = React.useMemo(() => {
-    return {
-      isIn: (name: string) => machine.current.path.includes(name),
-      can: (event: string) => machine.current.events[event]
+  const [state, dispatch] = React.useReducer(
+    (current, action) => {
+      switch (action.type) {
+        case "UPDATE_MACHINE": {
+          return {
+            send: machine.send,
+            current: machine.current,
+            data: machine.data,
+            computed: machine.computed,
+            isIn: machine.isIn,
+            can: machine.can
+          }
+        }
+        default: {
+          return current
+        }
+      }
+    },
+    {
+      send: machine.send,
+      current: machine.current,
+      data: machine.data,
+      computed: machine.computed,
+      isIn: machine.isIn,
+      can: machine.can
     }
-  }, [machine.current])
+  )
 
-  return [state.current, state.data, machine.send, helpers] as const
+  return state
 }

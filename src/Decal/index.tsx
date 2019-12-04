@@ -426,9 +426,15 @@ export const Decal: React.FC<Props> = ({
   return (
     <canvas
       ref={rDecal}
-      height={height}
       width={width}
-      style={style}
+      height={height}
+      style={{
+        ...style,
+        width,
+        height,
+        alignSelf: "center",
+        justifySelf: "center"
+      }}
       onClick={handleClick}
       onMouseMove={handleMouseMove}
       onMouseEnter={handleMouseEnter}
