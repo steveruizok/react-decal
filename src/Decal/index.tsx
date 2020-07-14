@@ -433,7 +433,9 @@ export const Decal: React.FC<Props> = ({
         width,
         height,
         alignSelf: "center",
-        justifySelf: "center"
+        justifySelf: "center",
+        userSelect: "none",
+        imageRendering: "pixelated"
       }}
       onClick={handleClick}
       onMouseMove={handleMouseMove}

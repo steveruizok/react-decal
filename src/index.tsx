@@ -5,6 +5,7 @@ import theme from "@rebass/preset"
 
 import Drawing from "./examples/drawing"
 import MouseHunter from "./examples/mouseHunter"
+import Lines from "./examples/lines"
 import Spline from "./examples/splines/spline"
 import Spline2 from "./examples/splines/spline2"
 import SplinePoints from "./examples/splines/splinePoints"
@@ -62,6 +63,13 @@ const routes = [
     path: "/iso/iso",
     component: Iso,
     description: "An isometric world of cubes.",
+    instructions: []
+  },
+  {
+    name: "Lines",
+    path: "/lines",
+    component: Lines,
+    description: "Box Connecting.",
     instructions: []
   },
   {

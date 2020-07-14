@@ -1,6 +1,6 @@
 import { Point2 } from "../raytracing/types"
 
-export function drawLine2d(from: Point2, to: Point2) {
+export function drawEdge2d(from: Point2, to: Point2) {
   const delta = {
     x: Math.abs(to.x - from.x),
     y: Math.abs(to.y - from.y)

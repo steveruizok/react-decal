@@ -2,7 +2,7 @@ import React from "react"
 import Decal, { DC, FC, MC, KC } from "../Decal"
 import { range } from "lodash"
 import { Point2 } from "./types"
-import { drawLine2d } from "./brensenham"
+import { drawEdge2d } from "./brensenham"
 import { castRay2d } from "./linesAndRays/castRay2d"
 
 const scale = 10

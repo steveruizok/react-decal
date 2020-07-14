@@ -111,7 +111,7 @@ export function drawLine3d(
   return points
 }
 
-export function drawLine2d(
+export function drawEdge2d(
   from: Point2,
   to: Point2,
   callback?: (point: Point2, points: Point2[]) => void
